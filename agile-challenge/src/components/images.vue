@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+<div class="q-pa-md">
     <q-table
       grid
       :card-container-class="cardContainerClass"
@@ -22,20 +22,79 @@
 
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-            <q-card class="my-card text-center">
-                <q-img
-                    src="https://cdn.quasar.dev/img/parallax2.jpg"
-                    basic
-                >
-                    <div class="absolute-bottom text-subtitle2 text-center">
-                    {{ props.row.title }}
-                    </div>
-                </q-img>
-            </q-card>
+            <myCard :data="props"  v-on:openCarrusel="OpenModal" />        
         </div>
+        
       </template>
     </q-table>
-  </div>
+      <q-dialog    
+        v-model="fullHeight"
+        full-width
+        >
+        <q-carousel
+            animated
+            v-model="slide"
+            swipeable
+            ref="carousel"
+            transition-prev="slide-right"
+            transition-next="slide-left"
+        
+         :fullscreen.sync="fullscreen"
+        >
+        <q-carousel-slide 
+            v-for="(dat, index) in data" 
+            :key="index" 
+            :name="dat.id" 
+            img-src="https://cdn.quasar.dev/img/mountains.jpg" 
+        >
+            <div class="absolute-bottom custom-caption">
+            <div class="text-h2">{{ dat.name}}</div>
+            <div class="text-subtitle1">{{ dat.name}}</div>
+            <div class="text-subtitle1">{{ dat.name}}</div>
+            </div>
+        </q-carousel-slide>
+         <template v-slot:control>
+        <q-carousel-control
+          position="bottom-right"
+          :offset="[18, 18]"
+        >
+          <q-btn
+            class="q-pa-sm"
+            push round color="white" text-color="primary"
+            :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="fullscreen = !fullscreen"
+          />
+           <q-btn
+            class="q-pa-sm"
+            push round color="orange" text-color="black" icon="arrow_left"
+            @click="$refs.carousel.previous()"
+          />
+          <q-btn
+           class="q-pa-sm"
+            push round color="orange" text-color="black" icon="arrow_right"
+            @click="$refs.carousel.next()"
+          />
+
+           <q-fab color="purple" icon="keyboard_arrow_up" direction="up">
+                
+                <ShareNetwork
+                        network="facebook"
+                        url=""
+                        title="Say hi to Vite! A brand new, extremely fast development setup for Vue."
+                        description="This week, I’d like to introduce you to 'Vite', which means 'Fast'. It’s a brand new development setup created by Evan You."
+                        quote="The hot reload is so fast it\'s near instant. - Evan You"
+                        hashtags="vuejs,vite"
+                    >
+                    <q-fab-action color="primary"  icon="facebook" />
+                </ShareNetwork>                
+            </q-fab>
+        
+
+        </q-carousel-control>
+      </template>
+        </q-carousel>
+    </q-dialog>
+  </div>  
 </template>
 <script>
 const deserts = [
@@ -53,17 +112,20 @@ const deserts = [
 const data = []
 
 deserts.forEach(name => {
-  for (let i = 0; i < 10; i++) {
-    data.push({ name: name + ' (' + i + ')', calories: 20 + Math.ceil(5 * Math.random()) })
+  for (let i = 1; i < 24; i++) {
+    data.push({ id: i, name: name + ' (' + i + ')', calories: 20 + Math.ceil(50 * Math.random()) })
   }
 })
 
-data.sort(() => (-1 + Math.floor(50 * Math.random())))
+data.sort(() => (-1 + Math.floor(3 * Math.random())))
 
 export default {
   data () {
     return {
       filter: '',
+      slide: 1,
+      fullHeight: false,
+      fullscreen: false,
       pagination: {
         page: 1,
         rowsPerPage: this.getItemsPerPage()
@@ -75,7 +137,9 @@ export default {
       data
     }
   },
-
+   components: {
+       myCard : () => import(/* webpackChunkName: "group-cards" */ "components/cards")
+   },
   computed: {
     cardContainerClass () {
       if (this.$q.screen.gt.xs) {
@@ -87,7 +151,7 @@ export default {
 
     rowsPerPageOptions () {
       if (this.$q.screen.gt.xs) {
-        return this.$q.screen.gt.sm ? [ 3, 6, 9 ] : [ 3, 6 ]
+        return this.$q.screen.gt.sm ? [ 1, 3, 6 ] : [ 1, 3 ]
       }
 
       return [ 3 ]
@@ -99,22 +163,41 @@ export default {
       this.pagination.rowsPerPage = this.getItemsPerPage()
     }
   },
+  mounted(){
+    console.log("Data",data)
+  },
 
   methods: {
     getItemsPerPage () {
       const { screen } = this.$q
       if (screen.lt.sm) {
-        return 3
+        return 1
       }
       if (screen.lt.md) {
-        return 6
+        return 3
       }
-      return 9
+      return 6
+    },
+    OpenModal(e){
+        console.log("el valor es ", e)
+        this.slide = e
+        this.fullHeight = true
     }
   }
 }
 </script>
+
 <style lang="sass">
+.custom-caption
+  text-align: center
+  padding: 12px
+  color: white
+  background-color: rgba(0, 0, 0, .3)
+
+.my-card
+  width: 100%
+  max-width: 300px
+  
 .grid-masonry
   flex-direction: column
   height: 700px
