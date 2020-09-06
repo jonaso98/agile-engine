@@ -33,13 +33,11 @@ apiAgileEngine.interceptors.response.use(function (response) {
     if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
 
-        
-        
         let datas = {
             apiKey: '23567b218376f79d9415',
         }
         const access_token = refreshAccessToken(datas);        
-        
+        // add refresh access token    
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token.data.datas.token;
         return apiAgileEngine(originalRequest);
     }    

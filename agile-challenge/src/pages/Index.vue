@@ -1,14 +1,14 @@
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-full.svg"
-    >
-  </q-page>
+    <imagesComponent />
+  
 </template>
 
 <script>
+
 export default {
-  name: 'PageIndex'
+  name: 'PageIndex',
+  components:{
+    imagesComponent: () => import(/* webpackChunkName: "group-LogOut" */ "components/images")
+  }
 }
 </script>
