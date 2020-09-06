@@ -89,7 +89,11 @@ export default {
     }
   },
   mounted(){
-    this.getTokenValid()
+    let datas = {
+        apiKey: '23567b218376f79d9415',
+    }
+
+    this.getTokenValid(datas)
 
   },
   methods: { 
