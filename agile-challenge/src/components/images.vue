@@ -22,17 +22,16 @@
 
       <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-          <q-card>
-            <q-card-section class="text-center">
-              Calories for
-              <br>
-              <strong>{{ props.row.name }}</strong>
-            </q-card-section>
-            <q-separator />
-            <q-card-section class="flex flex-center" :style="{ fontSize: props.row.calories + 'px' }">
-              <div>{{ props.row.calories }} g</div>
-            </q-card-section>
-          </q-card>
+            <q-card class="my-card text-center">
+                <q-img
+                    src="https://cdn.quasar.dev/img/parallax2.jpg"
+                    basic
+                >
+                    <div class="absolute-bottom text-subtitle2 text-center">
+                    {{ props.row.title }}
+                    </div>
+                </q-img>
+            </q-card>
         </div>
       </template>
     </q-table>
@@ -54,12 +53,12 @@ const deserts = [
 const data = []
 
 deserts.forEach(name => {
-  for (let i = 0; i < 24; i++) {
-    data.push({ name: name + ' (' + i + ')', calories: 20 + Math.ceil(50 * Math.random()) })
+  for (let i = 0; i < 10; i++) {
+    data.push({ name: name + ' (' + i + ')', calories: 20 + Math.ceil(5 * Math.random()) })
   }
 })
 
-data.sort(() => (-1 + Math.floor(3 * Math.random())))
+data.sort(() => (-1 + Math.floor(50 * Math.random())))
 
 export default {
   data () {
@@ -118,7 +117,7 @@ export default {
 <style lang="sass">
 .grid-masonry
   flex-direction: column
-  height: 600px
+  height: 700px
 
   &--2
     > div
