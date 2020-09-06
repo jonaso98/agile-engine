@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
-// import example from './module-example'
+// adding imagestorage as store of vuejs
+import imagesStorage from './imagesStorage'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,8 @@ Vue.use(Vuex)
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
-      // example
+      //ading imagesStorage
+      imagesStorage
     },
 
     // enable strict mode (adds overhead!)

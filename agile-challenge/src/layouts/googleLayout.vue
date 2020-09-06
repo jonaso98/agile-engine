@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex' 
+
 export default {
   name: 'GooglePhotosLayout',
   data () {
@@ -86,12 +88,12 @@ export default {
       ]
     }
   },
-  beforeCreate(){
+  mounted(){
     this.getTokenValid()
 
   },
   methods: { 
-    ...mapActions('imagesStorege', ['getTokenValid']),
+    ...mapActions('imagesStorage', ['getTokenValid']),
 
   }
 }
