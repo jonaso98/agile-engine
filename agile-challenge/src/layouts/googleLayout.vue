@@ -85,6 +85,14 @@ export default {
         { icon: 'book', text: 'Photo book' }
       ]
     }
+  },
+  beforeCreate(){
+    this.getTokenValid()
+
+  },
+  methods: { 
+    ...mapActions('imagesStorege', ['getTokenValid']),
+
   }
 }
 </script>
