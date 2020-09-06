@@ -94,10 +94,10 @@ export default {
     }
 
     this.getTokenValid(datas)
-
+    this.getImages()
   },
   methods: { 
-    ...mapActions('imagesStorage', ['getTokenValid']),
+    ...mapActions('imagesStorage', ['getTokenValid','getImages']),
 
   }
 }
