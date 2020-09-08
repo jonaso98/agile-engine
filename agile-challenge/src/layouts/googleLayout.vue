@@ -36,6 +36,7 @@
 
 <script>
 import { mapActions } from 'vuex' 
+import { SessionStorage } from 'quasar'
 
 export default {
   name: 'GooglePhotosLayout',
@@ -70,16 +71,19 @@ export default {
       ]
     }
   },
-  mounted(){
+  created(){
     let datas = {
         apiKey: '23567b218376f79d9415',
     }
 
-    this.getTokenValid(datas)
-    this.getImages()
+    this.getTokenValid(datas).then( response => {
+      //console.log('Response ',response.data.token)
+      
+    })
+    
   },
   methods: { 
-    ...mapActions('imagesStorage', ['getTokenValid','getImages']),
+    ...mapActions('imagesStorage', ['getTokenValid']),
 
   }
 }

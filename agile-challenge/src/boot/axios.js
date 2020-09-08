@@ -2,12 +2,12 @@ import Vue from 'vue'
 import axios from 'axios'
 
 const apiAgileEngine = axios.create({
-    baseURL: 'http://localhost/backend.body/public_html/app',
+    baseURL: 'http://interview.agileengine.com',
     withCredentials: false,    
     timeout: 10000,
     headers: {
         Accept: 'application/json',
-        'Content-Type' : 'application/x-www-form-urlencoded',            
+        'Content-Type' : 'application/json',            
     }
     
 })
@@ -30,7 +30,7 @@ apiAgileEngine.interceptors.response.use(function (response) {
     return response;
   }, async function (error) {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
 
         let datas = {
@@ -58,16 +58,30 @@ export default {
         .catch((error) => Promise.reject(error))        
     },
 
-    async getImages(token){
+    async getImages(token,page){
         const config = {
             headers: {              
               Accept: 'application/json',              
               'content-type': 'multipart/form-data',
-              //'Authorization': 'Bearer ' + token
+              'Authorization': 'Bearer ' + token
             }
         }
         
-        return await apiAgileEngine.get('/images', config)
+        return await apiAgileEngine.get('/images?page='+page, config)
+        .then((response) => Promise.resolve(response))
+        .catch((error) => Promise.reject(error))
+    },
+
+    async getImagesID(token,id){
+        const config = {
+            headers: {              
+              Accept: 'application/json',              
+              'content-type': 'multipart/form-data',
+              'Authorization': 'Bearer ' + token
+            }
+        }
+        
+        return await apiAgileEngine.get('/images/'+id, config)
         .then((response) => Promise.resolve(response))
         .catch((error) => Promise.reject(error))
     }

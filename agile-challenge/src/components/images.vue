@@ -1,16 +1,19 @@
 <template>
+
 <div class="q-pa-md">
-    <q-table
+    <Mytabla />
+    <!-- <q-table
       grid
       :card-container-class="cardContainerClass"
       title="Images"
-      :data="data"
+      :data="datas"
       :columns="columns"
       row-key="name"
       :filter="filter"
       hide-header
       :pagination.sync="pagination"
       :rows-per-page-options="rowsPerPageOptions"
+
     >
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
@@ -19,84 +22,30 @@
           </template>
         </q-input>
       </template>
-
-      <template v-slot:item="props">
+    <template v-slot:item="props">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
-            <myCard :data="props"  v-on:openCarrusel="OpenModal" />        
+             <q-card class="my-card" @click="emitThis(props.row.id)"  >
+                <q-card-section class="text-center">
+                    <q-img src="https://cdn.quasar.dev/img/chicken-salad.jpg"  />
+                </q-card-section>
+                <q-separator />
+                <q-card-section class="flex flex-center" :style="{ fontSize: props.row.id + 'px' }">
+                    <div>{{ props.row.id }} g</div>
+                </q-card-section>          
+            </q-card>
+            <myCard :datas="props"  v-on:openCarrusel="OpenModal" />        
         </div>
-        
-      </template>
+    </template>
     </q-table>
-      <q-dialog    
-        v-model="fullHeight"
-        full-width
-        >
-        <q-carousel
-            animated
-            v-model="slide"
-            swipeable
-            ref="carousel"
-            transition-prev="slide-right"
-            transition-next="slide-left"
-        
-         :fullscreen.sync="fullscreen"
-        >
-        <q-carousel-slide 
-            v-for="(dat, index) in data" 
-            :key="index" 
-            :name="dat.id" 
-            img-src="https://cdn.quasar.dev/img/mountains.jpg" 
-        >
-            <div class="absolute-bottom custom-caption">
-            <div class="text-h2">{{ dat.name}}</div>
-            <div class="text-subtitle1">{{ dat.name}}</div>
-            <div class="text-subtitle1">{{ dat.name}}</div>
-            </div>
-        </q-carousel-slide>
-         <template v-slot:control>
-        <q-carousel-control
-          position="bottom-right"
-          :offset="[18, 18]"
-        >
-          <q-btn
-            class="q-pa-sm"
-            push round color="white" text-color="primary"
-            :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="fullscreen = !fullscreen"
-          />
-           <q-btn
-            class="q-pa-sm"
-            push round color="orange" text-color="black" icon="arrow_left"
-            @click="$refs.carousel.previous()"
-          />
-          <q-btn
-           class="q-pa-sm"
-            push round color="orange" text-color="black" icon="arrow_right"
-            @click="$refs.carousel.next()"
-          />
-
-           <q-fab color="purple" icon="keyboard_arrow_up" direction="up">
-                
-                <ShareNetwork
-                        network="facebook"
-                        url=""
-                        title="Say hi to Vite! A brand new, extremely fast development setup for Vue."
-                        description="This week, I’d like to introduce you to 'Vite', which means 'Fast'. It’s a brand new development setup created by Evan You."
-                        quote="The hot reload is so fast it\'s near instant. - Evan You"
-                        hashtags="vuejs,vite"
-                    >
-                    <q-fab-action color="primary"  icon="facebook" />
-                </ShareNetwork>                
-            </q-fab>
-        
-
-        </q-carousel-control>
-      </template>
-        </q-carousel>
-    </q-dialog>
+    -->
+     
+    
   </div>  
 </template>
 <script>
+import { SessionStorage } from 'quasar'
+import { mapActions, mapState } from 'vuex' 
+
 const deserts = [
   'Frozen Yogurt',
   'Ice cream sandwich',
@@ -109,81 +58,84 @@ const deserts = [
   'Donut',
   'KitKat'
 ]
-const data = []
-
-deserts.forEach(name => {
-  for (let i = 1; i < 24; i++) {
-    data.push({ id: i, name: name + ' (' + i + ')', calories: 20 + Math.ceil(50 * Math.random()) })
-  }
-})
-
-data.sort(() => (-1 + Math.floor(3 * Math.random())))
 
 export default {
-  data () {
-    return {
-      filter: '',
-      slide: 1,
-      fullHeight: false,
-      fullscreen: false,
-      pagination: {
-        page: 1,
-        rowsPerPage: this.getItemsPerPage()
-      },
-      columns: [
-        { name: 'name', label: 'Name', field: 'name' },
-        { name: 'calories', label: 'Calories (g)', field: 'calories' }
-      ],
-      data
-    }
-  },
-   components: {
-       myCard : () => import(/* webpackChunkName: "group-cards" */ "components/cards")
-   },
-  computed: {
-    cardContainerClass () {
-      if (this.$q.screen.gt.xs) {
-        return 'grid-masonry grid-masonry--' + (this.$q.screen.gt.sm ? '3' : '2')
-      }
+    data () {
+        return {
+        filter: '',
+        slide: 1,
+        fullHeight: false,
+        fullscreen: false,
+        pagination: {
+            page: 1,
+            rowsPerPage: this.getItemsPerPage()
+        },
+        columns: [
+            { name: 'id', label: 'Name', field: 'id' },
+            { name: 'cropped_picture', label: 'Calories (g)', field: 'cropped_picture' }
+        ],
+            datos: []
+        }
+    },
+    components: {
+        myCard : () => import(/* webpackChunkName: "group-cards" */ "components/cards"),
+        Mytabla : () => import(/* webpackChunkName: "group-table" */ "components/table")
+    },
+    computed: {
+        ...mapState('imagesStorage',['userDetails','images']),
+        cardContainerClass () {
+        if (this.$q.screen.gt.xs) {
+            return 'grid-masonry grid-masonry--' + (this.$q.screen.gt.sm ? '3' : '2')
+        }
+        return void 0
+        },
 
-      return void 0
+        datas:{
+            get(){
+                this.pagination.page = this.images.page
+                this.datos = this.images.pictures 
+                return this.datos
+            },
+            set(val){
+                this.datos = val
+            }
+        },
+        pageCount(){
+            return this.images.pageCount
+        },
+        rowsPerPageOptions () {
+        if (this.$q.screen.gt.xs) {
+            return this.$q.screen.gt.sm ? [ 1, 3, 6 ] : [ 1, 3 ]
+        }
+
+        return [ 3 ]
+        }
     },
 
-    rowsPerPageOptions () {
-      if (this.$q.screen.gt.xs) {
-        return this.$q.screen.gt.sm ? [ 1, 3, 6 ] : [ 1, 3 ]
-      }
-
-      return [ 3 ]
-    }
-  },
-
-  watch: {
-    '$q.screen.name' () {
-      this.pagination.rowsPerPage = this.getItemsPerPage()
-    }
-  },
-  mounted(){
-    console.log("Data",data)
-  },
-
-  methods: {
-    getItemsPerPage () {
-      const { screen } = this.$q
-      if (screen.lt.sm) {
-        return 1
-      }
-      if (screen.lt.md) {
-        return 3
-      }
-      return 6
+    watch: {
+        '$q.screen.name' () {
+        this.pagination.rowsPerPage = this.getItemsPerPage()
+        }
     },
-    OpenModal(e){
-        console.log("el valor es ", e)
-        this.slide = e
-        this.fullHeight = true
+    mounted(){
+
+        console.log("images", sessionStorage.getItem('imagesStorage'))
+    },
+
+    methods: {
+        ...mapActions('imagesStorage', ['getImages']),
+        
+        getItemsPerPage () {
+        const { screen } = this.$q
+        if (screen.lt.sm) {
+            return this.pageCount/4
+        }
+        if (screen.lt.md) {
+            return this.pageCount/2
+        }
+            return this.pageCount
+        }       
     }
-  }
 }
 </script>
 
